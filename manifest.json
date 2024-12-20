@@ -1,0 +1,18 @@
+{
+  "manifest_version": 3,
+  "name": "Twitter Lite",
+  "version": "0.0",
+  "description": "Twitter Lite",
+  "permissions": [
+    "scripting"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "host_permissions": [
+    "https://x.com/*"
+  ],
+  "action": {
+    "default_title": "Twitter Lite"
+  }
+}

@@ -1,6 +1,10 @@
 ;(() => {
   const normalFavicon = "https://abs.twimg.com/favicons/twitter.3.ico"
 
+  function delay() {
+    return new Promise((resolve) => setTimeout(resolve, ms))
+  }
+
   function cleanTitle() {
     const titleEl = document.querySelector("title")
     const faviconEl = document.querySelector("link[rel='shortcut icon']")
@@ -19,11 +23,12 @@
   }
 
   function cleanRightSidebar() {
-    const container = document.querySelector(".css-175oi2r.r-vacyoi.r-ttdzmv")
+    const container = document.querySelector("div[aria-label='Trending']")
+      ?.children[0]
 
     if (!container) return
-    
-    while (container?.children?.length > 3) {
+
+    while (container.children.length > 3) {
       container.removeChild(container.lastElementChild)
     }
 
@@ -49,6 +54,11 @@
     )
     const jobsEl = document.querySelector("a[href='/jobs']")
     const exploreEl = document.querySelector("a[href='/explore']")
+    const homeEl = document.querySelector("a[href='/i/bookmarks']")
+
+    if (!homeEl) {
+      console.log("break")
+    }
 
     postEl?.remove()
     jobsEl?.remove()
@@ -63,9 +73,7 @@
     const elements = document.querySelectorAll(
       "span.css-1jxf684.r-bcqeeo.r-1ttztb7.r-qvutc0.r-poiln3"
     )
-    let adElement = Array.from(elements).filter(
-      (el) => el.innerText === "Ad"
-    )[0]
+    let adElement = Array.from(elements).find((el) => el.innerText === "Ad")
 
     if (!adElement) return
 
@@ -82,11 +90,41 @@
     el?.remove()
   }
 
+  async function cleanDiscoverMore() {
+    const elements = document.querySelectorAll(
+      ".css-1jxf684.r-bcqeeo.r-1ttztb7.r-qvutc0.r-poiln3"
+    )
+
+    let discoveryElement = Array.from(elements).find(
+      (el) => el.innerText === "Discover more"
+    )
+
+    if (!discoveryElement) return
+
+    while (true) {
+      discoveryElement = discoveryElement.parentElement
+      if (
+        discoveryElement.classList.toString() === "css-175oi2r" &&
+        discoveryElement.getAttribute("data-testid")
+      ) {
+        break
+      }
+    }
+
+    while (discoveryElement.nextElementSibling) {
+      discoveryElement.nextElementSibling.remove()
+      await delay(50)
+    }
+
+    discoveryElement.remove()
+  }
+
   cleanTitle()
   cleanRightSidebar()
   cleanNavbar()
   cleanAds()
   cleanMessages()
+  cleanDiscoverMore()
 
   setInterval(cleanTitle, 3000)
 
@@ -96,6 +134,7 @@
     cleanNavbar()
     cleanAds()
     cleanMessages()
+    cleanDiscoverMore()
   })
 
   const config = { childList: true, subtree: true }

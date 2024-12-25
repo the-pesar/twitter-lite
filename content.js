@@ -119,12 +119,56 @@
     discoveryElement.remove()
   }
 
+  function cleanVerifiedFollowers() {
+    const tabs = document.querySelectorAll(
+      "div[role='tablist'] > div[role='presentation']"
+    )
+
+    tabs.length === 4 && tabs[0].remove()
+  }
+
+  function cleanTranslatePost() {
+    const el = document.querySelector(
+      "button.r-n6v787.r-16dba41.r-6koalj.r-1w6e6rj.r-14gqq1x.r-1loqt21"
+    )
+
+    el?.remove()
+  }
+
+  function cleanSuggestedToFollow() {
+    const el = document.querySelector("aside[aria-label='Who to follow']")
+
+    el && el.parentElement.parentElement.remove()
+  }
+
+  function cleanStarNotifs() {
+    const starEl = document.querySelector("path[fill='#794BC4']")
+
+    if (!starEl) {
+      return
+    }
+
+    let notifEl = starEl.parentElement
+    while (
+      notifEl.classList.toString() !== "css-175oi2r" ||
+      notifEl.getAttribute("data-testid") !== "cellInnerDiv"
+    ) {
+      notifEl = notifEl.parentElement
+    }
+
+    notifEl.remove()
+  }
+
   cleanTitle()
   cleanRightSidebar()
   cleanNavbar()
   cleanAds()
   cleanMessages()
   cleanDiscoverMore()
+  cleanVerifiedFollowers()
+  cleanTranslatePost()
+  cleanSuggestedToFollow()
+  cleanStarNotifs()
 
   setInterval(cleanTitle, 3000)
 
@@ -135,6 +179,10 @@
     cleanAds()
     cleanMessages()
     cleanDiscoverMore()
+    cleanVerifiedFollowers()
+    cleanTranslatePost()
+    cleanSuggestedToFollow()
+    cleanStarNotifs()
   })
 
   const config = { childList: true, subtree: true }

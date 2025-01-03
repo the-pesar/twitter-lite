@@ -12,3 +12,13 @@ chrome.action.onClicked.addListener((tab) => {
     console.log("Not an X.com tab.")
   }
 })
+
+// chrome.webRequest.onBeforeRequest.addListener(
+//   function (details) {
+//     console.log(details);
+
+//     if (details.type === 'image') {
+//       return { cancel: true };
+//     }
+//   },
+//   { urls: ["<all_urls>"] });

@@ -12,6 +12,16 @@
   "host_permissions": [
     "https://x.com/*"
   ],
+  "content_scripts": [
+    {
+      "matches": [
+        "*://x.com/*"
+      ],
+      "js": [
+        "content.js"
+      ]
+    }
+  ],
   "action": {
     "default_title": "Twitter Lite"
   }

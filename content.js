@@ -1,7 +1,7 @@
-;(() => {
+; (() => {
   const normalFavicon = "https://abs.twimg.com/favicons/twitter.3.ico"
 
-  function delay() {
+  function delay(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms))
   }
 
@@ -9,7 +9,11 @@
     const titleEl = document.querySelector("title")
     const faviconEl = document.querySelector("link[rel='shortcut icon']")
 
-    const regex = /\((\d+)\)\s/ // detect notif count in title
+    if (!titleEl || !faviconEl) {
+      return
+    }
+
+    const regex = /\((\d+)\)\s/ // detect notif count in title    
 
     if (regex.test(titleEl.innerText)) {
       const parts = titleEl.innerText.split(" ")
@@ -56,17 +60,13 @@
     const exploreEl = document.querySelector("a[href='/explore']")
     const homeEl = document.querySelector("a[href='/i/bookmarks']")
 
-    if (!homeEl) {
-      console.log("break")
-    }
-
-    postEl?.remove()
-    jobsEl?.remove()
-    verifiedEl?.remove()
-    premiumEl?.remove()
-    notifCountEl?.remove()
-    homeUpdateEl?.remove()
-    exploreEl?.remove()
+    postEl && (postEl.style.display = "none")
+    jobsEl && (jobsEl.style.display = "none")
+    verifiedEl && (verifiedEl.style.display = "none")
+    premiumEl && (premiumEl.style.display = "none")
+    notifCountEl && (notifCountEl.style.display = "none")
+    homeUpdateEl && (homeUpdateEl.style.display = "none")
+    exploreEl && (exploreEl.style.display = "none")
   }
 
   function cleanAds() {
@@ -159,6 +159,101 @@
     notifEl.remove()
   }
 
+  function cleanVideos() {
+    const tweets = document.querySelectorAll('div.css-175oi2r[data-testid="cellInnerDiv"]')
+
+    for (let i = 0; i < tweets.length; i++) {
+      if (tweets[i].querySelector('video')) {
+        tweets[i].style.display = "none"
+      }
+    }
+
+    // const temp = document.querySelectorAll("video")
+
+    // temp.forEach((v) => {
+    //   v.setAttribute("preload", "none")
+    //   v.setAttribute("autoplay", "false")
+    //   v.setAttribute("loading", "lazy")
+    //   v.style.display = "none"
+    // })
+
+
+    // for (let i = 0; i < videoElements.length; i++) {
+    //   let tweetEl = videoElements[i].parentElement
+
+    //   while (
+    //     tweetEl.classList.toString() !== "css-175oi2r" ||
+    //     tweetEl.getAttribute("data-testid") !== "cellInnerDiv"
+    //   ) {
+    //     tweetEl = tweetEl.parentElement
+    //   }
+
+    //   tweetEl.style.display = "none"
+    // }
+  }
+
+  function cleanImages() {
+    const elements = document.querySelectorAll("div[data-testid='tweetPhoto']")
+
+    for (let i = 0; i < elements.length; i++) {
+      let tweetEl = elements[i].parentElement
+
+      while (
+        tweetEl.classList.toString() !== "css-175oi2r" ||
+        tweetEl.getAttribute("data-testid") !== "cellInnerDiv"
+      ) {
+        tweetEl = tweetEl.parentElement
+      }
+
+      tweetEl.querySelectorAll("img").forEach((imgEl) => {
+        imgEl.setAttribute("loading", "lazy")
+        imgEl.src = ""
+      })
+      const { width, height } = tweetEl.getBoundingClientRect()
+      tweetEl.style.opacity = "10%"
+    }
+  }
+
+  function cleanNotifNavbar() {
+    const el = document.querySelector("nav[aria-label='Notifications timelines']")
+
+    el?.remove()
+  }
+
+  function cleanWhoToFollow() {
+    const elements = document.querySelectorAll(".css-1jxf684.r-bcqeeo.r-1ttztb7.r-qvutc0.r-poiln3")
+
+    let whoToFollowEl = Array.from(elements).find(
+      (el) => el.innerText === "Who to follow"
+    )
+
+    if (!whoToFollowEl) return
+
+    let tweetEl = whoToFollowEl.parentElement
+    while (
+      tweetEl.classList.toString() !== "css-175oi2r" ||
+      tweetEl.getAttribute("data-testid") !== "cellInnerDiv"
+    ) {
+      tweetEl = tweetEl.parentElement
+    }
+
+    for (let i = 0; i < 5; i++) {
+      tweetEl.nextElementSibling.remove()
+    }
+
+    tweetEl.remove()
+
+  }
+
+  function cleanHomeTabs() {
+    const followingEl = document.querySelectorAll("a[href='/home'][role='tab']")[1]
+
+    if (!followingEl) return
+
+    followingEl?.click()
+    followingEl.parentElement.parentElement.remove() // remove tabs
+  }
+
   cleanTitle()
   cleanRightSidebar()
   cleanNavbar()
@@ -169,6 +264,11 @@
   cleanTranslatePost()
   cleanSuggestedToFollow()
   cleanStarNotifs()
+  // cleanVideos()
+  // cleanImages()
+  cleanNotifNavbar()
+  cleanWhoToFollow()
+  cleanHomeTabs()
 
   setInterval(cleanTitle, 3000)
 
@@ -183,6 +283,11 @@
     cleanTranslatePost()
     cleanSuggestedToFollow()
     cleanStarNotifs()
+    // cleanVideos()
+    // cleanImages()
+    cleanNotifNavbar()
+    cleanWhoToFollow()
+    cleanHomeTabs()
   })
 
   const config = { childList: true, subtree: true }
